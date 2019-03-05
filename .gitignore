@@ -1,5 +1,7 @@
 .DS_Store
+*.pyc
 data_store.p
+burned_levels.p
 radical.tsv
 kanji.tsv
 vocab.tsv
