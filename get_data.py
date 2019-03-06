@@ -1,13 +1,61 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import requests, json
 from collections import OrderedDict
 from tqdm import tqdm
 import pickle
+import ast
 
 try: my_api_key = open('api_key.txt','r').read() # either place api_key in little text file
 except IOError: my_api_key = "" # or ADD YOUR API KEY HERE
 
 data_store_fn = "data_store.p"
 burned_levels_fn = "burned_levels.p"
+pitch_patterns_fn = "pitches.txt"
+
+lines = open(pitch_patterns_fn,'r').read().split('\n')
+pitch_table = {}
+for l in lines:
+	word, pattern = l.split(':')
+	pitch_table[word] = ast.literal_eval(pattern)
+
+moraic_kana = [
+# hiragana
+'あ',	'い',	'う',	'え',	'お',	
+'か',	'き',	'く',	'け',	'こ',	
+'が',	'ぎ',	'ぐ',	'げ',	'ご',	
+'さ',	'し',	'す',	'せ',	'そ',	
+'ざ',	'じ',	'ず',	'ぜ',	'ぞ',	
+'た',	'ち',	'つ',	'て',	'と',	
+'だ',	'ぢ',	'づ',	'で',	'ど',	
+'な',	'に',	'ぬ',	'ね',	'の',	
+'は',	'ひ',	'ふ',	'へ',	'ほ',	
+'ば',	'び',	'ぶ',	'べ',	'ぼ',	
+'ぱ',	'ぴ',	'ぷ',	'ぺ',	'ぽ',	
+'ま',	'み',	'む',	'め',	'も',	
+'や',			'ゆ',			'よ',	
+'ら',	'り',	'る',	'れ',	'ろ',	
+'わ',	'ゐ',	'ゑ',	'を',	
+				'ん',	
+# katakana
+'ア',	'イ',	'ウ',	'エ',	'オ',	
+'カ',	'キ',	'ク',	'ケ',	'コ',	
+'ガ',	'ギ',	'グ',	'ゲ',	'ゴ',	
+'サ',	'シ',	'ス',	'セ',	'ソ',	
+'ザ',	'ジ',	'ズ',	'ゼ',	'ゾ',	
+'タ',	'チ',	'ツ',	'テ',	'ト',	
+'ダ',	'ヂ',	'ヅ',	'デ',	'ド',	
+'ナ',	'ニ',	'ヌ',	'ネ',	'ノ',	
+'ハ',	'ヒ',	'フ',	'ヘ',	'ホ',	
+'バ',	'ビ',	'ブ',	'ベ',	'ボ',	
+'パ',	'ピ',	'プ',	'ペ',	'ポ',	
+'マ',	'ミ',	'ム',	'メ',	'モ',	
+'ヤ',			'ユ',			'ヨ',	
+'ラ',	'リ',	'ル',	'レ',	'ロ',	
+'ワ',	'ヰ',	'ヱ',	'ヲ',	
+				'ン',	
+]
 
 def save_cornichon(thing, fn):
 	f = open(fn, 'w')
@@ -61,10 +109,25 @@ class Vocab(UserSpecific):
 		self.meaning = item_dict['meaning']
 		self.character = item_dict['character']
 		self.kana = item_dict['kana']
-		self.pitch = [] # to be populated later
 		UserSpecific.__init__(self, 
 			item_dict['level'], item_dict['meaning'], item_dict['user_specific'])
 		self.generate_unique_id()
+		self.count_morae()
+		self.lookup_pitch()
+
+	def lookup_pitch(self):
+		try: self.pitch = pitch_table[self.character.encode('utf-8')]
+		except KeyError:
+			self.pitch = [-1]
+			print "no pattern for %s    %s" % (self.character, self.kana)
+
+	def count_morae(self):
+# 		import pdb;pdb.set_trace()
+# 		decoded_kana = .decode('utf-8')  # NECESSARY?
+		self.morae = 0
+		for kana in self.kana:
+			if kana.encode('utf-8') in moraic_kana: self.morae += 1
+
 
 Constructors = {
 	'radicals': Radical,

@@ -26,8 +26,8 @@ def output_tsv(all_item_objects, score_range=(1,9)):
 				elif type == 'kanji':
 					out_str = str(u.level) + '\t' + u.character + '\t' + u.meaning + '\n'
 				elif type == 'vocab':
-					out_str = str(u.level) + '\t' + u.character + '\t' + u.meaning + '\n'
-# 					out_str = str(u.level) + '\t' + u.character + '\t' + u.pitch + '\t' + u.meaning + '\n'
+# 					out_str = str(u.level) + '\t' + u.character + '\t' + u.meaning + '\n'
+					out_str = str(u.level) + '\t' + u.character + '\t' + repr(u.pitch) + '\t' + str(u.morae) + '\t' + u.meaning + '\n'
 				out_f.write(out_str.encode('utf-8'))
 		out_f.close()
 
