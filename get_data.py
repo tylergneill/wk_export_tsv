@@ -119,7 +119,7 @@ class Vocab(UserSpecific):
 		try: self.pitch = pitch_table[self.character.encode('utf-8')]
 		except KeyError:
 			self.pitch = [-1]
-			print "no pattern for %s    %s" % (self.character, self.kana)
+			print "not found in pitch table: %s    %s" % (self.character, self.kana)
 
 	def count_morae(self):
 # 		import pdb;pdb.set_trace()
