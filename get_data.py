@@ -37,7 +37,8 @@ moraic_kana = [
 'や',			'ゆ',			'よ',	
 'ら',	'り',	'る',	'れ',	'ろ',	
 'わ',	'ゐ',	'ゑ',	'を',	
-				'ん',	
+				'ん',
+				'っ',
 # katakana
 'ア',	'イ',	'ウ',	'エ',	'オ',	
 'カ',	'キ',	'ク',	'ケ',	'コ',	
@@ -54,7 +55,8 @@ moraic_kana = [
 'ヤ',			'ユ',			'ヨ',	
 'ラ',	'リ',	'ル',	'レ',	'ロ',	
 'ワ',	'ヰ',	'ヱ',	'ヲ',	
-				'ン',	
+				'ン',
+				'ッ',
 ]
 
 def save_cornichon(thing, fn):
@@ -108,7 +110,7 @@ class Vocab(UserSpecific):
 		self.level = item_dict['level']
 		self.meaning = item_dict['meaning']
 		self.character = item_dict['character']
-		self.kana = item_dict['kana']
+		self.kana = item_dict['kana'].split(',')[0]
 		UserSpecific.__init__(self, 
 			item_dict['level'], item_dict['meaning'], item_dict['user_specific'])
 		self.generate_unique_id()

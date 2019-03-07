@@ -27,7 +27,7 @@ def output_tsv(all_item_objects, score_range=(1,9)):
 					out_str = str(u.level) + '\t' + u.character + '\t' + u.meaning + '\n'
 				elif type == 'vocab':
 # 					out_str = str(u.level) + '\t' + u.character + '\t' + u.meaning + '\n'
-					out_str = str(u.level) + '\t' + u.character + '\t' + repr(u.pitch) + '\t' + str(u.morae) + '\t' + u.meaning + '\n'
+					out_str = str(u.level) + '\t' + u.character + '\t' + u.kana + '\t' + str(u.morae) + '\t' + repr(u.pitch) + '\t' + u.meaning + '\n'
 				out_f.write(out_str.encode('utf-8'))
 		out_f.close()
 
@@ -57,7 +57,7 @@ print "levels known so far with all kanji burned are:", format_levels(prev_kanji
 
 # get data, either via api or from local storage
 
-choice = raw_input('get new data? (Y/n)')
+choice = raw_input('refresh data from website? (Y/n)')
 
 if choice == 'Y': # get new item object data and save
 	all_item_objects = get_data.get_latest()
