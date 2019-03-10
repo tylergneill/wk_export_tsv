@@ -7,8 +7,10 @@ from tqdm import tqdm
 import pickle
 import ast
 
-try: my_api_key = open('api_key.txt','r').read() # either place api_key in little text file
-except IOError: my_api_key = "" # or ADD YOUR API KEY HERE
+try: my_api_key_v1 = open('api_key_v1.txt','r').read() # either place v1 API key in little text file
+except IOError: my_api_key_v1 = "" # or ADD YOUR v1 API KEY HERE
+
+# may be updated for v2 later
 
 data_store_fn = "data_store.p"
 burned_levels_fn = "burned_levels.p"
@@ -140,7 +142,7 @@ Constructors = {
 
 def get_latest():
 
-	global my_api_key
+	global my_api_key_v1
 
 	fetched_item_objects = OrderedDict()
 
