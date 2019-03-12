@@ -150,7 +150,7 @@ def get_latest():
 
 		# fetch new data
 		
-		url = "https://www.wanikani.com/api/user/%s/%s" % (my_api_key, type)
+		url = "https://www.wanikani.com/api/user/%s/%s" % (my_api_key_v1, type)
 		response = requests.get(url)
 		json_data = json.loads(response.text) # convert to corresponding python dict format
 		new_item_data = json_data['requested_information']
