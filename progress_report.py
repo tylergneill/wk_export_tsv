@@ -1,5 +1,11 @@
 import get_data
 from collections import OrderedDict
+import sys
+
+choice = ''
+try:
+	if sys.argv[1] == '-Y': choice = 'Y'
+except: pass
 
 def output_tsv(all_item_objects, score_range=(1,9)):
 	"""
@@ -31,6 +37,35 @@ def output_tsv(all_item_objects, score_range=(1,9)):
 				out_f.write(out_str.encode('utf-8'))
 		out_f.close()
 
+# initialize with level details
+
+prev_kanji_burned_levels = get_data.load_cornichon(get_data.burned_levels_fn, list())
+
+# get data, either via api or from local storage
+
+if choice != 'Y': choice = raw_input('refresh data? (Y/n)')
+
+if choice == 'Y': # get new item object data and save
+	all_item_objects = get_data.get_latest()
+	get_data.save_cornichon(all_item_objects, get_data.data_store_fn)
+
+else: # load local item object data
+	print "loading previous item data..."
+	all_item_objects = get_data.load_cornichon(get_data.data_store_fn, OrderedDict())
+	if all_item_objects == OrderedDict(): print "nothing loaded"
+	else: print "loaded"
+
+# output object info to tsv files
+score_range = (1,9) 	# (1,9) all; (5,6) guru, etc.
+output_tsv(all_item_objects, score_range=score_range) 
+print "tsv files updated"
+
+### END MAIN PROGRAM
+
+
+
+### EXTRA STUFF: determine some level stats
+
 def format_levels(levels):
 	"""
 		Takes list of level numbers and formats nicely like 1-4, 5, 6-7, etc.
@@ -49,35 +84,8 @@ def format_levels(levels):
 		all_runs_str += ', '
 	return all_runs_str[:-2]
 
-
-# initialize with level details
-
-prev_kanji_burned_levels = get_data.load_cornichon(get_data.burned_levels_fn, list())
-print "levels known so far with all kanji burned are:", format_levels(prev_kanji_burned_levels)
-
-# get data, either via api or from local storage
-
-choice = raw_input('refresh data from website? (Y/n)')
-
-if choice == 'Y': # get new item object data and save
-	all_item_objects = get_data.get_latest()
-	get_data.save_cornichon(all_item_objects, get_data.data_store_fn)
-
-else: # load local item object data
-	print "loading previous item data..."
-	all_item_objects = get_data.load_cornichon(get_data.data_store_fn, OrderedDict())
-	if all_item_objects == OrderedDict(): print "nothing loaded"
-	else: print "loaded"
-
-# output object info to tsv files
-score_range = (1,9) 	# (1,9) all; (5,6) guru, etc.
-output_tsv(all_item_objects, score_range=score_range) 
-print "tsv files updated"
-
-# determine which levels fully burned
-
 print
-print "(kanji burn stats)"
+print "(level stats)"
 print
 
 kanji_only=True
@@ -94,11 +102,19 @@ for u in all_item_objects.values():
 curr_kanji_burned_levels = ( list( set(all_levels) - set(unburned_levels) ) )
 # curr_everything_burned_levels = ( list( set(all_levels) - set(unburned_levels) ) )
 
-if curr_kanji_burned_levels != prev_kanji_burned_levels:
-	print "hey! now levels with totally burned kanji are:", format_levels(curr_kanji_burned_levels)
-	get_data.save_cornichon(curr_kanji_burned_levels, get_data.burned_levels_fn)
+print "levels cleared:", format_levels(curr_kanji_burned_levels),
 
-# example use case for burn stats; see https://codepen.io/tylergneill/full/MzYgry/
+if curr_kanji_burned_levels != prev_kanji_burned_levels:
+	newly_burned_levels = ( list( set(curr_kanji_burned_levels) - set(prev_kanji_burned_levels) ) )
+	print "(hey, new progress! congrats! on newly clearing %s)" % newly_burned_levels
+	get_data.save_cornichon(curr_kanji_burned_levels, get_data.burned_levels_fn)
+else: print
+
+
+
+# below some even more specific stuff for me: how I further use kanji stats to track progress
+# see https://codepen.io/tylergneill/full/MzYgry/
+
 print "(for CodePen)"
 
 total_kanji_enlightened = 0
