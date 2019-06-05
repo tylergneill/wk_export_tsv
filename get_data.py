@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# CURRENTLY USES v1 API CALLS, NEEDS UPDATING FOR v2
+
 import requests, json
 from collections import OrderedDict
 from tqdm import tqdm
@@ -9,8 +11,6 @@ import ast
 
 try: my_api_key_v1 = open('api_key_v1.txt','r').read() # either place v1 API key in little text file
 except IOError: my_api_key_v1 = "" # or ADD YOUR v1 API KEY HERE
-
-# may be updated for v2 later
 
 data_store_fn = "data_store.p"
 burned_levels_fn = "burned_levels.p"
